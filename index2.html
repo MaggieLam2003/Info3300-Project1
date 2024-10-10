@@ -1,0 +1,149 @@
+<html>
+    <head>
+        
+    </head>
+    <body>
+        
+
+<<<<<<< Updated upstream
+=======
+            <svg id="graph-two" width="600" height="600" style=" background-color:aliceblue;"></svg>
+
+            <div id="legend" style="display: inline-block; vertical-align: top; margin-left: 20px;">
+                <h3>Legend</h3>
+            
+            </div>
+
+            </div>
+
+            <script>
+                const svg = d3.select("svg#graph-two");
+                const width = svg.attr("width");
+                const height = svg.attr("height");
+                const margin = {top: 10, right: 10, bottom: 40, left: 50};
+                const chartWidth = width - margin.left - margin.right;
+                const chartHeight = height - margin.top - margin.bottom;
+
+                d3.csv("filtered.csv").then((data) => {
+                    console.log(data);
+                    const xScale = d3.scaleLinear()
+                        .domain([0, 100])
+                        .range([0, chartWidth]);
+
+                    const yScale = d3.scaleLinear()
+                        .domain([0, 100])
+                        .range([chartHeight, 0]);
+
+
+                    let xAxis = d3.axisBottom(xScale);
+                    let yAxis = d3.axisLeft(yScale);
+
+                    const chartArea = svg.append("g")
+                        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+                    // make x-axis
+                    chartArea.append("g")
+                        .attr("transform", `translate(0,${chartHeight})`)
+                        .call(xAxis)
+
+                        // add text
+                        .append("text")
+                        .attr("x", chartWidth / 2)
+                        .attr("y", 35)
+                        .attr("fill", "black")
+                        .style("text-anchor", "middle")
+                        .text("Danceability");
+
+                    // make y-axis
+                    chartArea.append("g")
+                        .call(yAxis)
+
+                        .append("text")
+                        .attr("transform", "rotate(-90)")
+                        .attr("x", -chartHeight / 2)
+                        .attr("y", -40)
+                        .attr("fill", "black")
+                        .style("text-anchor", "middle")
+                        .text("Energy");
+
+                    // make gridlines
+                    let leftGridline =  xAxis
+                                        .tickSize(-chartHeight)
+                                        .tickFormat("");
+                    
+                    let bottomGridline = yAxis
+                                        .tickSize(-chartWidth)
+                                        .tickFormat("");
+                    
+                    chartArea.append("g")
+                        .attr("class", "y gridlines")
+                        .attr("transform", `translate(0,${chartHeight})`)
+                        .call(leftGridline);
+
+                    chartArea.append("g")
+                        .attr("class", "x gridlines")
+                        .call(bottomGridline);
+                        
+
+                    // Add axis lines at x=0.5 and y=0.5
+                    chartArea.append("line")
+                        .attr("class", "axis-line")
+                        .attr("x1", xScale(0.5))
+                        .attr("x2", xScale(0.5))
+                        .attr("y1", 0)
+                        .attr("y2", chartHeight);
+
+                    chartArea.append("line")
+                        .attr("class", "axis-line")
+                        .attr("x1", 0)
+                        .attr("x2", chartWidth)
+                        .attr("y1", yScale(0.5))
+                        .attr("y2", yScale(0.5));
+
+                    // color scale for the genres
+                    const colorScale = d3.scaleOrdinal()
+                    .domain(["dance", "hip hop", "pop", "electronic", "rock", "country", "indie", "folk", "r&b", "rap"])
+                    .range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]); // Blue, Orange, Green, Red, Purple, Brown, Pink, Gray, Olive, Cyan
+
+                    let circles = chartArea.selectAll("circle")
+                        .data(data)
+                        .join("circle")
+                
+                        .attr("cx", d => xScale(d.dnce))
+                        .attr("cy", d => yScale(d.nrgy))
+                        .attr("r", 3)
+                        .attr("fill", d => colorScale(d['top-genre']));
+                        // .attr("opacity", .5);
+
+                    // Create legend
+                    const legend = d3.select("#legend")
+                        .append("svg")
+                        .attr("width", 200)
+                        .attr("height", 200)
+                        .selectAll("g")
+                        .data(colorScale.domain())
+                        .enter()
+                        
+                        .append("g")
+                        .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
+                    legend.append("rect")
+                        .attr("x", 0)
+                        .attr("y", 0)
+                        .attr("width", 18)
+                        .attr("height", 18)
+                        .attr("fill", colorScale);
+
+                    legend.append("text")
+                        .attr("x", 24)
+                        .attr("y", 9)
+                        .attr("dy", "0.35em")
+                        .text(d => d);
+                });
+            </script>
+        
+        </p>
+        
+>>>>>>> Stashed changes
+    </body>
+</html>
