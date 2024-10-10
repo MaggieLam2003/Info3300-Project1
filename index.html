@@ -1,9 +1,79 @@
 <html>
     <head>
-        
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <style>
+    
+            .gridlines .domain {
+              display: none;
+            }
+            
+            .gridlines line {
+              stroke: #cecbcb;
+            }
+              
+          
+        </style>
     </head>
     <body>
         
+        <h1> Analyzing music through time</h1>
+        <p><strong>Graph 2:</strong> dancibility correlation to energy according to different genres
+            <br>
+            <br>
+        
+            <svg id="graph-two" width="500" height="500" style=" background-color:aliceblue;"></svg>
+            <script>
+                const svg = d3.select("svg#graph-two");
+                const width = svg.attr("width");
+                const height = svg.attr("height");
+                const margin = {top: 10, right: 10, bottom: 10, left: 10};
+                const chartWidth = width - margin.left - margin.right;
+                const chartHeight = height - margin.top - margin.bottom;
 
+                d3.csv("songs_normalize.csv").then((data) => {
+                    const xScale = d3.scaleLinear()
+                        .domain([0, 1])
+                        .range([0, chartWidth]);
+
+                    const yScale = d3.scaleLinear()
+                        .domain([0, 1])
+                        .range([chartHeight, 0]);
+
+                    let xAxis = d3.axisBottom(xScale);
+                    let yAxis = d3.axisLeft(yScale);
+
+                    const chartArea = svg.append("g")
+                        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+                    // make x-axis
+                    chartArea.append("g")
+                        .attr("transform", `translate(0,${yScale(0.5)})`)
+                        .call(xAxis);
+
+                    // make y-axis
+                    chartArea.append("g")
+                        .attr("transform", `translate(${xScale(0.5)},0)`)
+                        .call(yAxis);
+
+                    // color scale for the genres
+                    const colorScale = d3.scaleOrdinal()
+                    .domain(["dance", "hip hop", "pop", "electronic", "rock", "country", "indie", "folk", "r&b", "rap"])
+                    .range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]); // Blue, Orange, Green, Red, Purple, Brown, Pink, Gray, Olive, Cyan
+
+                    let circles = chartArea.selectAll("circle")
+                        .data(data)
+                        .join("circle")
+                
+                        .attr("cx", d => xScale(d.danceability))
+                        .attr("cy", d => yScale(d.energy))
+                        .attr("r", 3)
+                        .attr("fill", d => colorScale(d.genre))
+                        .attr("opacity", .5);
+                    
+                });
+            </script>
+        
+        </p>
+        
     </body>
 </html>
