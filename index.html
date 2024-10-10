@@ -20,12 +20,6 @@
               stroke: white;
             }
 
-            .axis-line {
-              stroke: red;
-              stroke-width: 2;
-              stroke-dasharray: 4;
-            }
-
         </style>
     </head>
     <body>
@@ -112,20 +106,7 @@
                         .call(bottomGridline);
                         
 
-                    // Add axis lines at x=0.5 and y=0.5
-                    chartArea.append("line")
-                        .attr("class", "axis-line")
-                        .attr("x1", xScale(0.5))
-                        .attr("x2", xScale(0.5))
-                        .attr("y1", 0)
-                        .attr("y2", chartHeight);
-
-                    chartArea.append("line")
-                        .attr("class", "axis-line")
-                        .attr("x1", 0)
-                        .attr("x2", chartWidth)
-                        .attr("y1", yScale(0.5))
-                        .attr("y2", yScale(0.5));
+            
 
                     // color scale for the genres
                     const colorScale = d3.scaleOrdinal()
