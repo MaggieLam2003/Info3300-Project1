@@ -139,8 +139,8 @@
                         .attr("cx", d => xScale(d.danceability))
                         .attr("cy", d => yScale(d.energy))
                         .attr("r", 3)
-                        .attr("fill", d => colorScale(d.genre))
-                        .attr("opacity", .5);
+                        .attr("fill", d => colorScale(d.genre));
+                        // .attr("opacity", .5);
 
                     // Create legend
                     const legend = d3.select("#legend")
