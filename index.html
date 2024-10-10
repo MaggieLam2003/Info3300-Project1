@@ -98,11 +98,12 @@
                     
                     chartArea.append("g")
                         .attr("class", "y gridlines")
-                        .attr("transform", `translate(0,${chartHeight})`)
+                        .attr("transform",`translate(${chartWidth/10},${chartHeight})`)
                         .call(leftGridline);
 
                     chartArea.append("g")
                         .attr("class", "x gridlines")
+                        .attr("transform", `translate(0,${-chartHeight/ 10})`)
                         .call(bottomGridline);
                         
 
