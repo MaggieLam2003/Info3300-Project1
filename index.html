@@ -52,13 +52,13 @@
                 const chartWidth = width - margin.left - margin.right;
                 const chartHeight = height - margin.top - margin.bottom;
 
-                d3.csv("songs_normalize.csv").then((data) => {
+                d3.csv("filtered.csv").then((data) => {
                     const xScale = d3.scaleLinear()
-                        .domain([0, 1])
+                        .domain([0, 100])
                         .range([0, chartWidth]);
 
                     const yScale = d3.scaleLinear()
-                        .domain([0, 1])
+                        .domain([0, 100])
                         .range([chartHeight, 0]);
 
 
@@ -136,10 +136,10 @@
                         .data(data)
                         .join("circle")
                 
-                        .attr("cx", d => xScale(d.danceability))
-                        .attr("cy", d => yScale(d.energy))
+                        .attr("cx", d => xScale(d.dnce))
+                        .attr("cy", d => yScale(d.nrgy))
                         .attr("r", 3)
-                        .attr("fill", d => colorScale(d.genre));
+                        .attr("fill", d => colorScale(d['top-genre']));
                         // .attr("opacity", .5);
 
                     // Create legend
