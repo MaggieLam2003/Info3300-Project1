@@ -45,13 +45,16 @@
     <h1>Analyzing music popularity by genre</h1>
     <p><strong>Graph 1:</strong> mean popularity of different genres of music.
 
-    <p><i><strong>Popularity:</strong> The popularity of a track is a value between 0 and 100, with 100 being the most popular.
+    <p><i><strong>Popularity:</strong> The popularity of a track is a value between 0 and 100, with 100 being the most
+            popular.
 
 
-        The
-        popularity is calculated by algorithm and is based, in the most part, on the total number of plays the track has
-        had and how recent those plays are. Generally speaking, songs that are being played a lot now will have a higher
-        popularity than songs that were played a lot in the past</i>.</p>
+            The
+            popularity is calculated by algorithm and is based, in the most part, on the total number of plays the track
+            has
+            had and how recent those plays are. Generally speaking, songs that are being played a lot now will have a
+            higher
+            popularity than songs that were played a lot in the past</i>.</p>
     <svg id="graph-one" width="600" height="600" style=" background-color:aliceblue;"></svg>
     <script>
         let svg1 = d3.select("svg#graph-one");
@@ -67,6 +70,11 @@
             data.forEach(d => {
                 d.pop = +d.pop;
             });
+
+            const colorScale1 = d3.scaleOrdinal()
+                .domain(["dance", "hip hop", "pop", "electronic", "rock", "country", "indie", "folk", "r&b", "rap", "grime", "latin"])
+                .range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#aec7e8", "#ffbb78"]);
+
             const x = d3.scaleBand()
                 .range([margin.left, width1])
                 .domain(filteredData.map(d => d['top-genre']))
@@ -119,13 +127,17 @@
                 .attr("y", function (d) { return y(d.meanPop); })
                 .attr("width", 40)
                 .attr("height", function (d) { return height1 - y(d.meanPop) - 1; })
-                .attr("fill", "#69b3a2")
+                .attr("fill", function (d) { return colorScale1(d.genre); });
 
         });
     </script>
     <h1> Analyzing music components by genre</h1>
     <p><strong>Graph 2:</strong> dancibility correlation to energy according to different genres with popularity marking
-        <p><i>The <strong>x-axis</strong> represents the danceability of the songs(how suitable a song is for dancing), while the <strong>y-axis</strong> represents their energy which is a measure of intensity and activity (typically, energetic tracks feel fast, loud, and noisy). The size of each <strong>circle </strong>indicates the popularity of the song, with larger circles representing more popular songs. Additionally, the different colors represented the musical genre.</i></p>
+    <p><i>The <strong>x-axis</strong> represents the danceability of the songs(how suitable a song is for dancing),
+            while the <strong>y-axis</strong> represents their energy which is a measure of intensity and activity
+            (typically, energetic tracks feel fast, loud, and noisy). The size of each <strong>circle </strong>indicates
+            the popularity of the song, with larger circles representing more popular songs. Additionally, the different
+            colors represented the musical genre.</i></p>
     <div>
 
         <svg id="graph-two" width="600" height="600" style=" background-color:aliceblue;"></svg>
