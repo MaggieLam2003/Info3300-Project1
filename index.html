@@ -60,7 +60,7 @@
         let width1 = svg1.attr("width") - margin1.left - margin1.right;
         let height1 = svg1.attr("height") - margin1.top - margin1.bottom;
         d3.csv("filtered.csv").then((data) => {
-            console.log(data)
+            console.log("data:", data)
             const uniqueGenres = [...new Set(data.map(d => d['top-genre']))];
             const filteredData = data.filter((d, i) => uniqueGenres.indexOf(d['top-genre']) !== -1 && uniqueGenres.indexOf(d['top-genre']) < 10);
             console.log(filteredData);
@@ -104,31 +104,12 @@
                 .style("font-size", "12px")
                 .text("Popularity (%)");
 
-            // color scale for the genres
-            const colorScale = d3.scaleOrdinal()
-                .domain(["dance", "hip hop", "pop", "electronic", "rock", "country", "indie", "folk", "r&b", "rap", "grime", "latin"])
-                .range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#aec7e8", "#ffbb78"]); // Blue, Orange, Green, Red, Purple, Brown, Pink, Gray, Olive, Cyan, Light Blue, Light Orange
-
-
 
             const genreGroups = d3.group(filteredData, d => d['top-genre']);
             const meanPopularity = Array.from(genreGroups, ([key, values]) => {
                 const meanPop = d3.mean(values, d => d.pop);
                 return { genre: key, meanPop: meanPop };
             });
-            console.log(meanPopularity);
-
-            // Create legend
-            const legend = d3.select("#legend")
-                .append("svg")
-                .attr("width", 100)
-                .attr("height", 200);
-
-            const legendItems = legend.selectAll("g")
-                .data(colorScale.domain())
-                .join("g")
-                .attr("transform", (d, i) => `translate(0, ${i * 20})`);
-
 
             svg1.selectAll(".bar")
                 .data(meanPopularity)
@@ -235,11 +216,11 @@
 
 
 
-
             // color scale for the genres
             const colorScale = d3.scaleOrdinal()
-                .domain(["dance", "hip hop", "pop", "electronic", "rock", "country", "indie", "folk", "r&b", "rap"])
-                .range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]); // Blue, Orange, Green, Red, Purple, Brown, Pink, Gray, Olive, Cyan
+                .domain(["dance", "hip hop", "pop", "electronic", "rock", "country", "indie", "folk", "r&b", "rap", "grime", "latin"])
+                .range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#aec7e8", "#ffbb78"]); // Blue, Orange, Green, Red, Purple, Brown, Pink, Gray, Olive, Cyan, Light Blue, Light Orange
+
 
             let circles = chartArea.selectAll("circle")
                 .data(data)
@@ -256,7 +237,7 @@
             // Create legend
             const legend = d3.select("#legend")
                 .append("svg")
-                .attr("width", 200)
+                .attr("width", 100)
                 .attr("height", 200);
 
             const legendItems = legend.selectAll("g")
