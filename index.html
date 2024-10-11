@@ -45,13 +45,13 @@
     <h1>Analyzing music popularity by genre</h1>
     <p><strong>Graph 1:</strong> mean popularity of different genres of music.
 
-    <h2>Popularity: The popularity of a track is a value between 0 and 100, with 100 being the most popular.
+    <p><i><strong>Popularity:</strong> The popularity of a track is a value between 0 and 100, with 100 being the most popular.
 
 
         The
         popularity is calculated by algorithm and is based, in the most part, on the total number of plays the track has
         had and how recent those plays are. Generally speaking, songs that are being played a lot now will have a higher
-        popularity than songs that were played a lot in the past.</h2>
+        popularity than songs that were played a lot in the past</i>.</p>
     <svg id="graph-one" width="600" height="600" style=" background-color:aliceblue;"></svg>
     <script>
         let svg1 = d3.select("svg#graph-one");
@@ -124,13 +124,8 @@
         });
     </script>
     <h1> Analyzing music components by genre</h1>
-    <p><strong>Graph 2:</strong> dancibility correlation to energy according to different genres
-    <h2>Danceability: Danceability describes how suitable a track is for dancing based on a combination of musical
-        elements including tempo, rhythm stability, beat strength, and overall regularity. A value of 0.0 is least
-        danceable and 1.0 is most danceable.</h2>
-    <h2>Energy: Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity.
-        Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach
-        prelude scores low on the scale.</h2>
+    <p><strong>Graph 2:</strong> dancibility correlation to energy according to different genres with popularity marking</p>
+        <p><i>The <strong>x-axis</strong> represents the danceability of the songs(how suitable a song is for dancing), while the <strong>y-axis</strong> represents their energy which is a measure of intensity and activity (typically, energetic tracks feel fast, loud, and noisy). The size of each <strong>circle </strong>indicates the popularity of the song, with larger circles representing more popular songs. Additionally, the different colors represented the musical genre.</i></p>
     <div>
 
         <svg id="graph-two" width="600" height="600" style=" background-color:aliceblue;"></svg>
