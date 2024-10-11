@@ -145,13 +145,17 @@
 
         d3.csv("filtered.csv").then((data) => {
             const xScale = d3.scaleLinear()
-                .domain([0, 100])
+                .domain(d3.extent(data, d => +d.dnce))
                 .range([0, chartWidth]);
 
             const yScale = d3.scaleLinear()
-                .domain([0, 100])
+                .domain(d3.extent(data, d => +d.nrgy))
                 .range([chartHeight, 0]);
 
+            // maybe add a scale so the size of the circle represents the popularity of the song
+            const rScale = d3.scaleLinear()
+                .domain(d3.extent(data, d => +d.pop))
+                .range([0.5, 7]);
 
             let xAxis = d3.axisBottom(xScale);
             let yAxis = d3.axisLeft(yScale);
@@ -195,28 +199,16 @@
 
             chartArea.append("g")
                 .attr("class", "y gridlines")
-                .attr("transform", `translate(0,${chartHeight})`)
+                .attr("transform", `translate(${chartWidth / 10},${chartHeight})`)
                 .call(leftGridline);
 
             chartArea.append("g")
                 .attr("class", "x gridlines")
+                .attr("transform", `translate(0,${-chartHeight / 10})`)
                 .call(bottomGridline);
 
 
-            // Add axis lines at x=0.5 and y=0.5
-            chartArea.append("line")
-                .attr("class", "axis-line")
-                .attr("x1", xScale(0.5))
-                .attr("x2", xScale(0.5))
-                .attr("y1", 0)
-                .attr("y2", chartHeight);
 
-            chartArea.append("line")
-                .attr("class", "axis-line")
-                .attr("x1", 0)
-                .attr("x2", chartWidth)
-                .attr("y1", yScale(0.5))
-                .attr("y2", yScale(0.5));
 
             // color scale for the genres
             const colorScale = d3.scaleOrdinal()
@@ -229,30 +221,31 @@
 
                 .attr("cx", d => xScale(d.dnce))
                 .attr("cy", d => yScale(d.nrgy))
-                .attr("r", 3)
-                .attr("fill", d => colorScale(d['top-genre']));
-            // .attr("opacity", .5);
+                // change the radius of the circle to represent the popularity of the song?
+                .attr("r", d => rScale(d.pop))
+
+                .attr("fill", d => colorScale(d['top-genre']))
+                .attr("opacity", .6);
 
             // Create legend
             const legend = d3.select("#legend")
                 .append("svg")
                 .attr("width", 200)
-                .attr("height", 200)
-                .selectAll("g")
-                .data(colorScale.domain())
-                .enter()
+                .attr("height", 200);
 
-                .append("g")
+            const legendItems = legend.selectAll("g")
+                .data(colorScale.domain())
+                .join("g")
                 .attr("transform", (d, i) => `translate(0, ${i * 20})`);
 
-            legend.append("rect")
+            legendItems.append("rect")
                 .attr("x", 0)
                 .attr("y", 0)
                 .attr("width", 18)
                 .attr("height", 18)
                 .attr("fill", colorScale);
 
-            legend.append("text")
+            legendItems.append("text")
                 .attr("x", 24)
                 .attr("y", 9)
                 .attr("dy", "0.35em")
