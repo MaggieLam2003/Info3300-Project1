@@ -48,13 +48,17 @@
 
                 d3.csv("filtered.csv").then((data) => {
                     const xScale = d3.scaleLinear()
-                        .domain([0, 100])
+                        .domain(d3.extent(data, d => +d.dnce))
                         .range([0, chartWidth]);
 
                     const yScale = d3.scaleLinear()
-                        .domain([0, 100])
+                        .domain(d3.extent(data, d => +d.nrgy))
                         .range([chartHeight, 0]);
 
+                    // maybe add a scale so the size of the circle represents the popularity of the song
+                    const rScale = d3.scaleLinear()
+                        .domain(d3.extent(data, d => +d.pop))
+                        .range([0.5, 7]);
 
                     let xAxis = d3.axisBottom(xScale);
                     let yAxis = d3.axisLeft(yScale);
@@ -120,9 +124,11 @@
                 
                         .attr("cx", d => xScale(d.dnce))
                         .attr("cy", d => yScale(d.nrgy))
-                        .attr("r", 3)
-                        .attr("fill", d => colorScale(d['top-genre']));
-                        // .attr("opacity", .5);
+                        // change the radius of the circle to represent the popularity of the song?
+                        .attr("r", d => rScale(d.pop))
+
+                        .attr("fill", d => colorScale(d['top-genre']))
+                        .attr("opacity", .6);
 
                     // Create legend
                     const legend = d3.select("#legend")
