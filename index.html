@@ -1,175 +1,267 @@
 <html>
-    <head>
-        <script src="https://d3js.org/d3.v7.min.js"></script>
-        <style>
-            .gridlines .domain {
-              display: none;
-            }
-            
-            .gridlines line {
-              stroke: #cecbcb;
-            }
-            
-            .legend {
-              font-family: Arial, sans-serif;
-              font-size: 12px;
-            }
-            
-            .legend rect {
-              stroke-width: 2;
-              stroke: white;
-            }
 
-            .axis-line {
-              stroke: red;
-              stroke-width: 2;
-              stroke-dasharray: 4;
-            }
+<head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .gridlines .domain {
+            display: none;
+        }
 
-        </style>
-    </head>
-    <body>
-        
-        <h1> Analyzing music through time</h1>
-        <p><strong>Graph 2:</strong> dancibility correlation to energy according to different genres
-        
-            <div>
+        .gridlines line {
+            stroke: #cecbcb;
+        }
 
-            <svg id="graph-two" width="600" height="600" style=" background-color:aliceblue;"></svg>
+        .legend {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
 
-            <div id="legend" style="display: inline-block; vertical-align: top; margin-left: 20px;">
-                <h3>Legend</h3>
-            
-            </div>
+        .legend rect {
+            stroke-width: 2;
+            stroke: white;
+        }
 
-            </div>
+        .axis-line {
+            stroke: red;
+            stroke-width: 2;
+            stroke-dasharray: 4;
+        }
+    </style>
+</head>
 
-            <script>
-                const svg = d3.select("svg#graph-two");
-                const width = svg.attr("width");
-                const height = svg.attr("height");
-                const margin = {top: 10, right: 10, bottom: 40, left: 50};
-                const chartWidth = width - margin.left - margin.right;
-                const chartHeight = height - margin.top - margin.bottom;
+<body>
 
-                d3.csv("filtered.csv").then((data) => {
-                    const xScale = d3.scaleLinear()
-                        .domain([0, 100])
-                        .range([0, chartWidth]);
+    <h1>Analyzing music popularity by genre</h1>
+    <p><strong>Graph 1:</strong> mean popularity of different genres of music.
 
-                    const yScale = d3.scaleLinear()
-                        .domain([0, 100])
-                        .range([chartHeight, 0]);
+    <h2>Popularity: The popularity of a track is a value between 0 and 100, with 100 being the most popular.
 
 
-                    let xAxis = d3.axisBottom(xScale);
-                    let yAxis = d3.axisLeft(yScale);
+        The
+        popularity is calculated by algorithm and is based, in the most part, on the total number of plays the track has
+        had and how recent those plays are. Generally speaking, songs that are being played a lot now will have a higher
+        popularity than songs that were played a lot in the past.</h2>
+    <svg id="graph-one" width="600" height="600" style=" background-color:aliceblue;"></svg>
+    <script>
+        let svg1 = d3.select("svg#graph-one");
+        const margin1 = { top: 10, right: 10, bottom: 40, left: 50 };
 
-                    const chartArea = svg.append("g")
-                        .attr("transform", `translate(${margin.left},${margin.top})`);
+        let width1 = svg1.attr("width") - margin1.left - margin1.right;
+        let height1 = svg1.attr("height") - margin1.top - margin1.bottom;
+        d3.csv("filtered.csv").then((data) => {
+            console.log(data)
+            const uniqueGenres = [...new Set(data.map(d => d['top-genre']))];
+            const filteredData = data.filter((d, i) => uniqueGenres.indexOf(d['top-genre']) !== -1 && uniqueGenres.indexOf(d['top-genre']) < 10);
+            console.log(filteredData);
+            data.forEach(d => {
+                d.pop = +d.pop;
+            });
+            const x = d3.scaleBand()
+                .range([margin.left, width1])
+                .domain(filteredData.map(d => d['top-genre']))
+                .padding(0.2);
+            svg1.append("g")
+                .attr("transform", `translate(0, ${height1})`)
+                .call(d3.axisBottom(x));
 
-                    // make x-axis
-                    chartArea.append("g")
-                        .attr("transform", `translate(0,${chartHeight})`)
-                        .call(xAxis)
+            svg1.append("text")
+                .attr("class", "axis-label")
+                .attr("x", width1 / 2)
+                .attr("y", height1 + 40)
+                .attr("text-anchor", "middle")
+                .style("font-size", "12px")
+                .text("Genre");
 
-                        // add text
-                        .append("text")
-                        .attr("x", chartWidth / 2)
-                        .attr("y", 35)
-                        .attr("fill", "black")
-                        .style("text-anchor", "middle")
-                        .text("Danceability");
 
-                    // make y-axis
-                    chartArea.append("g")
-                        .call(yAxis)
+            let maxPop = d3.max(filteredData, d => d.pop);
+            const y = d3.scaleLinear()
+                .domain([0, maxPop])
+                .range([height1, 0]);
 
-                        .append("text")
-                        .attr("transform", "rotate(-90)")
-                        .attr("x", -chartHeight / 2)
-                        .attr("y", -40)
-                        .attr("fill", "black")
-                        .style("text-anchor", "middle")
-                        .text("Energy");
+            let leftAxis = d3.axisLeft(y).tickFormat(d3.format(""));
 
-                    // make gridlines
-                    let leftGridline =  xAxis
-                                        .tickSize(-chartHeight)
-                                        .tickFormat("");
-                    
-                    let bottomGridline = yAxis
-                                        .tickSize(-chartWidth)
-                                        .tickFormat("");
-                    
-                    chartArea.append("g")
-                        .attr("class", "y gridlines")
-                        .attr("transform", `translate(0,${chartHeight})`)
-                        .call(leftGridline);
+            svg1.append("g")
+                .attr("transform", `translate(${margin.left + 1},0)`)
+                .call(leftAxis);
 
-                    chartArea.append("g")
-                        .attr("class", "x gridlines")
-                        .call(bottomGridline);
-                        
+            svg1.append("text")
+                .attr("class", "axis-label")
+                .attr("transform", `rotate(-90, ${margin1.left - 30},300)`)
+                .attr("y", 300)
+                .attr("x", margin1.left - 30)
+                .attr("text-anchor", "middle")
+                .style("font-size", "12px")
+                .text("Popularity (%)");
 
-                    // Add axis lines at x=0.5 and y=0.5
-                    chartArea.append("line")
-                        .attr("class", "axis-line")
-                        .attr("x1", xScale(0.5))
-                        .attr("x2", xScale(0.5))
-                        .attr("y1", 0)
-                        .attr("y2", chartHeight);
 
-                    chartArea.append("line")
-                        .attr("class", "axis-line")
-                        .attr("x1", 0)
-                        .attr("x2", chartWidth)
-                        .attr("y1", yScale(0.5))
-                        .attr("y2", yScale(0.5));
 
-                    // color scale for the genres
-                    const colorScale = d3.scaleOrdinal()
-                    .domain(["dance", "hip hop", "pop", "electronic", "rock", "country", "indie", "folk", "r&b", "rap"])
-                    .range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]); // Blue, Orange, Green, Red, Purple, Brown, Pink, Gray, Olive, Cyan
 
-                    let circles = chartArea.selectAll("circle")
-                        .data(data)
-                        .join("circle")
-                
-                        .attr("cx", d => xScale(d.dnce))
-                        .attr("cy", d => yScale(d.nrgy))
-                        .attr("r", 3)
-                        .attr("fill", d => colorScale(d['top-genre']));
-                        // .attr("opacity", .5);
+            const genreGroups = d3.group(filteredData, d => d['top-genre']);
+            const meanPopularity = Array.from(genreGroups, ([key, values]) => {
+                const meanPop = d3.mean(values, d => d.pop);
+                return { genre: key, meanPop: meanPop };
+            });
+            console.log(meanPopularity);
 
-                    // Create legend
-                    const legend = d3.select("#legend")
-                        .append("svg")
-                        .attr("width", 200)
-                        .attr("height", 200)
-                        .selectAll("g")
-                        .data(colorScale.domain())
-                        .enter()
-                        
-                        .append("g")
-                        .attr("transform", (d, i) => `translate(0, ${i * 20})`);
 
-                    legend.append("rect")
-                        .attr("x", 0)
-                        .attr("y", 0)
-                        .attr("width", 18)
-                        .attr("height", 18)
-                        .attr("fill", colorScale);
+            svg1.selectAll(".bar")
+                .data(meanPopularity)
+                .enter()
+                .append("rect")
+                .attr("x", function (d) { return x(d.genre); })
+                .attr("y", function (d) { return y(d.meanPop); })
+                .attr("width", 40)
+                .attr("height", function (d) { return height1 - y(d.meanPop) - 1; })
+                .attr("fill", "#69b3a2")
 
-                    legend.append("text")
-                        .attr("x", 24)
-                        .attr("y", 9)
-                        .attr("dy", "0.35em")
-                        .text(d => d);
-                });
-            </script>
-        
-        </p>
-        
-    </body>
+        });
+    </script>
+    <h1> Analyzing music components by genre</h1>
+    <p><strong>Graph 2:</strong> dancibility correlation to energy according to different genres
+    <h2>Danceability: Danceability describes how suitable a track is for dancing based on a combination of musical
+        elements including tempo, rhythm stability, beat strength, and overall regularity. A value of 0.0 is least
+        danceable and 1.0 is most danceable.</h2>
+    <h2>Energy: Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity.
+        Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach
+        prelude scores low on the scale.</h2>
+    <div>
+
+        <svg id="graph-two" width="600" height="600" style=" background-color:aliceblue;"></svg>
+
+        <div id="legend" style="display: inline-block; vertical-align: top; margin-left: 20px;">
+            <h3>Legend</h3>
+
+        </div>
+
+    </div>
+
+    <script>
+        const svg = d3.select("svg#graph-two");
+        const width = svg.attr("width");
+        const height = svg.attr("height");
+        const margin = { top: 10, right: 10, bottom: 40, left: 50 };
+        const chartWidth = width - margin.left - margin.right;
+        const chartHeight = height - margin.top - margin.bottom;
+
+        d3.csv("filtered.csv").then((data) => {
+            const xScale = d3.scaleLinear()
+                .domain([0, 100])
+                .range([0, chartWidth]);
+
+            const yScale = d3.scaleLinear()
+                .domain([0, 100])
+                .range([chartHeight, 0]);
+
+
+            let xAxis = d3.axisBottom(xScale);
+            let yAxis = d3.axisLeft(yScale);
+
+            const chartArea = svg.append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            // make x-axis
+            chartArea.append("g")
+                .attr("transform", `translate(0,${chartHeight})`)
+                .call(xAxis)
+
+                // add text
+                .append("text")
+                .attr("x", chartWidth / 2)
+                .attr("y", 35)
+                .attr("fill", "black")
+                .style("text-anchor", "middle")
+                .text("Danceability");
+
+            // make y-axis
+            chartArea.append("g")
+                .call(yAxis)
+
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("x", -chartHeight / 2)
+                .attr("y", -40)
+                .attr("fill", "black")
+                .style("text-anchor", "middle")
+                .text("Energy");
+
+            // make gridlines
+            let leftGridline = xAxis
+                .tickSize(-chartHeight)
+                .tickFormat("");
+
+            let bottomGridline = yAxis
+                .tickSize(-chartWidth)
+                .tickFormat("");
+
+            chartArea.append("g")
+                .attr("class", "y gridlines")
+                .attr("transform", `translate(0,${chartHeight})`)
+                .call(leftGridline);
+
+            chartArea.append("g")
+                .attr("class", "x gridlines")
+                .call(bottomGridline);
+
+
+            // Add axis lines at x=0.5 and y=0.5
+            chartArea.append("line")
+                .attr("class", "axis-line")
+                .attr("x1", xScale(0.5))
+                .attr("x2", xScale(0.5))
+                .attr("y1", 0)
+                .attr("y2", chartHeight);
+
+            chartArea.append("line")
+                .attr("class", "axis-line")
+                .attr("x1", 0)
+                .attr("x2", chartWidth)
+                .attr("y1", yScale(0.5))
+                .attr("y2", yScale(0.5));
+
+            // color scale for the genres
+            const colorScale = d3.scaleOrdinal()
+                .domain(["dance", "hip hop", "pop", "electronic", "rock", "country", "indie", "folk", "r&b", "rap"])
+                .range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]); // Blue, Orange, Green, Red, Purple, Brown, Pink, Gray, Olive, Cyan
+
+            let circles = chartArea.selectAll("circle")
+                .data(data)
+                .join("circle")
+
+                .attr("cx", d => xScale(d.dnce))
+                .attr("cy", d => yScale(d.nrgy))
+                .attr("r", 3)
+                .attr("fill", d => colorScale(d['top-genre']));
+            // .attr("opacity", .5);
+
+            // Create legend
+            const legend = d3.select("#legend")
+                .append("svg")
+                .attr("width", 200)
+                .attr("height", 200)
+                .selectAll("g")
+                .data(colorScale.domain())
+                .enter()
+
+                .append("g")
+                .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
+            legend.append("rect")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", 18)
+                .attr("height", 18)
+                .attr("fill", colorScale);
+
+            legend.append("text")
+                .attr("x", 24)
+                .attr("y", 9)
+                .attr("dy", "0.35em")
+                .text(d => d);
+        });
+    </script>
+
+    </p>
+
+</body>
+
 </html>
