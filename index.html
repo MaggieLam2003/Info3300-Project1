@@ -10,15 +10,18 @@
               stroke: #cecbcb;
             }
             
-            .legend {
-              font-family: Arial, sans-serif;
-              font-size: 12px;
+            #legend {
+                font-family: Arial, sans-serif;
+                font-size: 12px;
+                padding: 10px;
+                background-color: #ffffff;
+                border: 1px solid #d1d1d1;
+                border-radius: 4px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+              
             }
             
-            /* .legend rect {
-              stroke-width: 2;
-              stroke: rgb(98, 83, 83);
-            } */
+            
 
         </style>
     </head>
@@ -116,8 +119,8 @@
 
                     // color scale for the genres
                     const colorScale = d3.scaleOrdinal()
-                    .domain(["dance", "hip hop", "pop", "electronic", "rock", "country", "indie", "folk", "r&b", "rap"])
-                    .range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]); // Blue, Orange, Green, Red, Purple, Brown, Pink, Gray, Olive, Cyan
+                    .domain(["dance", "hip hop", "pop", "electronic", "rock", "country", "indie", "folk", "r&b", "rap", "grime", "latin"])
+                    .range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#aec7e8", "#ffbb78"]); // Blue, Orange, Green, Red, Purple, Brown, Pink, Gray, Olive, Cyan, Light Blue, Light Orange
 
                     let circles = chartArea.selectAll("circle")
                         .data(data)
@@ -134,13 +137,14 @@
                     // Create legend
                     const legend = d3.select("#legend")
                         .append("svg")
-                        .attr("width", 200)
+                        .attr("width", 100)
                         .attr("height", 200);
 
                     const legendItems = legend.selectAll("g")
                         .data(colorScale.domain())
                         .join("g")
                         .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+                        
 
                     legendItems.append("rect")
                         .attr("x", 0)
